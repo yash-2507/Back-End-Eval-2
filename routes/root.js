@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const path = require("path");
 const { News } = require("../db/db");
 
 router.post("/new", async (req, res) => {
@@ -34,7 +33,7 @@ router.post("/new", async (req, res) => {
 });
 
 router.get("/get", async (req, res) => {
-    const { q, location, date, author, tag } = req.query;
+    const { q, location, date, author, tag, id, title } = req.query;
 
     let searcher = {};
 
@@ -49,9 +48,37 @@ router.get("/get", async (req, res) => {
 
     searcher[author ? "Author" : undefined] = author;
 
-    searcher[tag ? "tag" : undefined] = tag;
+    searcher[tag ? "tags" : undefined] = tag;
+
+    if (id) {
+        searcher[_id] = id;
+    }
+
+    if (title) {
+        searcher["Title"] = title;
+    }
 
     const news = await News.find(searcher);
+
+    if (title || id) {
+        const id_to_update = String(news[0]["_id"]);
+        const prev_view = Number(news[0]["total_views"]);
+
+        if (prev_view > 50) {
+            await News.findByIdAndUpdate(id_to_update, {
+                category: "trending",
+            });
+        }
+        if (prev_view > 100) {
+            await News.findByIdAndUpdate(id_to_update, {
+                category: "top",
+            });
+        }
+
+        await News.findByIdAndUpdate(id_to_update, {
+            total_views: prev_view + 1,
+        });
+    }
 
     return res.json(news);
 });
