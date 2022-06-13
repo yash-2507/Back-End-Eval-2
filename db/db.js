@@ -1,6 +1,7 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const { Schema, model } = require("mongoose");
-const connection = mongoose.connect("mongodb://127.0.0.1:27017/news");
+const connection = mongoose.connect(process.env.MONGO_URI);
 
 const NewsSchema = new Schema({
     Title: { type: String, required: true },
