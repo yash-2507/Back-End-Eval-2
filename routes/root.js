@@ -6,22 +6,22 @@ const { News } = require("../db/db");
 router.post("/new", async (req, res) => {
     try {
         const {
-            title,
-            description,
-            date,
-            author,
-            location,
+            Title,
+            Description,
+            Date,
+            Author,
+            Location,
             tags,
             total_views,
             category,
         } = req.body;
 
         const newNews = await News.create({
-            title,
-            description,
-            date,
-            author,
-            location,
+            Title,
+            Description,
+            Date,
+            Author,
+            Location,
             tags,
             total_views,
             category,
@@ -31,6 +31,29 @@ router.post("/new", async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+});
+
+router.get("/get", async (req, res) => {
+    const { q, location, date, author, tag } = req.query;
+
+    let searcher = {};
+
+    if (q) {
+        searcher["Title"] = {
+            $regex: q,
+            $options: "i",
+        };
+    }
+
+    searcher[location ? "Location" : undefined] = location;
+
+    searcher[author ? "Author" : undefined] = author;
+
+    searcher[tag ? "tag" : undefined] = tag;
+
+    const news = await News.find(searcher);
+
+    return res.json(news);
 });
 
 module.exports = router;

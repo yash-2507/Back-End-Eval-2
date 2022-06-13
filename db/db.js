@@ -3,10 +3,10 @@ const { Schema, model } = require("mongoose");
 const connection = mongoose.connect("mongodb://127.0.0.1:27017/news");
 
 const NewsSchema = new Schema({
-    title: { type: String, required: true },
-    description: String,
-    date: Date,
-    author: {
+    Title: { type: String, required: true },
+    Description: String,
+    Date: Date,
+    Author: {
         type: String,
         enum: [
             "Mathias Newburn",
@@ -15,7 +15,7 @@ const NewsSchema = new Schema({
             "Kathrine Faichney",
         ],
     },
-    location: { type: String, enum: ["London", "New York"] },
+    Location: { type: String, enum: ["London", "New York"] },
     tags: {
         type: String,
         enum: ["politics", "crime", "tech", "sports", "health"],
